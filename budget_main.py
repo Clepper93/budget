@@ -15,6 +15,17 @@ for line in e:
     else:
         large_expenses_file.append(int(line))
 large_expenses = large_expenses_file[-1] #work only with last item in list
+
+#import savings file, define savings variable
+s = open('savings.txt','r+')
+savings_file = []
+for line in s:
+    if line == '\n':
+        pass
+    else:
+        savings_file.append(int(line))
+savings = savings_file[-1]
+
 #define daily_budget, does not change from day to day
 daily_budget = 15
 #determine if any money in large expenses fund was spent, and subtract from fund
@@ -26,8 +37,19 @@ netgain = (daily_budget - expensereport)
 netloss = (expensereport - daily_budget)
 if expensereport < daily_budget:
     large_expenses += netgain
-    print("You saved ${}! Money in large expenses fund now ${}.".format(netgain,large_expenses))
-    e.write("\n" + str(large_expenses))
+    #if amount under budget meets certain threshold, add a small amount to savings, and the rest to the large expenses fund
+    if netgain >= 10:
+        savings += 2
+        large_expenses -= 2
+        s.write('\n' + str(savings))
+        e.write("\n" + str(large_expenses))
+        print("You saved ${}! Money in large expenses fund now ${}.".format(netgain,large_expenses))
+    elif 10 > netgain >= 5:
+        savings +=1
+        large_expenses -= 1
+        s.write('\n' + str(savings))
+        e.write("\n" + str(large_expenses))
+        print("You saved ${}! Money in large expenses fund now ${}.".format(netgain,large_expenses))
 elif expensereport > daily_budget:
     large_expenses -= netloss
     print("You overspent by ${}. Money in large expenses fund now ${}.".format(netloss, large_expenses))
@@ -39,4 +61,6 @@ else:
 f.write("\n" + str(expensereport))
 f.close()
 e.close()
+s.close()
+
 
